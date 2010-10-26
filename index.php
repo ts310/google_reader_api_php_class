@@ -19,26 +19,18 @@ header('Content-type: text/html; charset=utf8;');
 
 $googleReader = new GoogleReader;
 
-//$data = $googleReader->fetchRequestWithURL("unread-count?output=json");
-//debug(json_decode($data));
-//$data = $googleReader->fetchRequestWithURL("user-info?output=json");
-//debug(json_decode($data));
-//$data = $googleReader->fetchRequestWithURL("stream/contents/user/-/state/com.google/reading-list");
-//debug(json_decode($data));
-
-$data = $googleReader->fetchRequestWithURL("tag/list?output=json");
-debug(json_decode($data, true));
-
-$data = $googleReader->fetchRequestWithURL("subscription/list?output=json");
-$json = json_decode($data, true);
+$json = $googleReader->fetch();
 
 $Subscription = new Subscription;
 
-$Subscription->drop();
+if ($Subscription->tableExists()) {
+    $Subscription->drop();
+}
 $Subscription->createTable();
 
 if (!empty($json['subscriptions'])) {
     foreach($json['subscriptions'] as $item) {
+        debug($item);
         $Subscription->save(array(
             'id' => $item['id'],
             'title' => $item['title'],

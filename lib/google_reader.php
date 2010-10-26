@@ -44,4 +44,26 @@ class GoogleReader {
         }
         return false;
     }
+
+    public function fetch($type = null) {
+        switch ($type) {
+        case 'unread':
+            $url = "unread-count?output=json";
+            break;
+        case 'user-info':
+            $url = "user-info?output=json";
+            break;
+        case 'tags':
+            $url = "tag/list?output=json"; 
+            break;
+        case 'reading-list':
+            $url = "stream/contents/user/-/state/com.google/reading-list";
+            break;
+        default:
+            $url = "subscription/list?output=json";
+            break;
+        }
+        $data = $this->fetchRequestWithURL($url);
+        return json_decode($data, true);
+    }
 }

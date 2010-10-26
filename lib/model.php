@@ -61,4 +61,12 @@ class Model {
     public function truncate() {
         return $this->query(sprintf('DELETE FROM %s WHERE 1 = 1;', $this->table));
     }
+
+    public function tableExists() {
+        $sql = sprintf('SELECT COUNT(*) AS num FROM sqlite_master WHERE type=\'table\' AND name = \'%s\';', $this->table);
+        $result = $this->query($sql);
+        $row = $result->fetch(SQLITE_ASSOC);
+        if (!empty($row['num']) && $row['num'] > 0) return true;
+        return false;
+    }
 }
