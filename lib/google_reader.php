@@ -2,18 +2,32 @@
 
 require_once 'HTTP/Request.php';
 
+/**
+ * Google Reader API client class
+ * 
+ * @author Tsuyoshi Saito
+ * @version 1.0
+ */
 class GoogleReader {
-
     var $authKey = '';
     var $baseURL = 'http://www.google.com/reader/api/0/';
 
     public function __construct() {
+    }
+
+    /**
+     * Connect with google account
+     *
+     * @param $email String
+     * @param $password String
+     */
+    public function connectWithAccount($email, $password) {
         $url = 'https://www.google.com/accounts/ClientLogin';
         $req = new HTTP_Request($url);
         $req->setMethod(HTTP_REQUEST_METHOD_POST);
         $req->addPostData("service", "reader");
-        $req->addPostData("Email", GOOGLE_EMAIL);
-        $req->addPostData("Passwd", GOOGLE_PASSWD);
+        $req->addPostData("Email", $email);
+        $req->addPostData("Passwd", $password);
         $req->addPostData("source", "reader");
         $response = $req->sendRequest();
         if (PEAR::isError($response)) {
@@ -30,7 +44,7 @@ class GoogleReader {
         }
     }
 
-    public function fetchRequestWithURL($url) {
+    private function fetchRequestWithURL($url) {
         $url = $this->baseURL . $url;
         $req = new HTTP_Request($url);
         $auth = sprintf("GoogleLogin auth=%s", $this->authKey);
@@ -59,6 +73,7 @@ class GoogleReader {
         case 'reading-list':
             $url = "stream/contents/user/-/state/com.google/reading-list";
             break;
+        case 'subscriptions':
         default:
             $url = "subscription/list?output=json";
             break;
